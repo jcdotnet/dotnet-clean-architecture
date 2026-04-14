@@ -1,0 +1,33 @@
+name: .NET CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout the repository code
+    - uses: actions/checkout@v4
+
+    # 2. Set up the .NET 10 SDK environment
+    - name: Setup .NET 10
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+
+    # 3. Restore NuGet packages
+    - name: Restore dependencies
+      run: dotnet restore
+
+    # 4. Build the solution in Release mode
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+
+    # 5. Execute all Unit Tests
+    - name: Test
+      run: dotnet test --no-restore --configuration Release --verbosity normal
