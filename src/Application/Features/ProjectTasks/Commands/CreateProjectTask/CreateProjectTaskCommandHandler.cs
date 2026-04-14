@@ -1,11 +1,13 @@
-﻿using Domain.Entities;
+﻿using Application.Common.Interfaces;
+using Domain.Entities;
 using MediatR;
 
 namespace Application.Features.ProjectTasks.Commands.CreateProjectTask
 {
-    public class CreateProjectTaskCommandHandler : IRequestHandler<CreateProjectTaskCommand, Guid>
+    public class CreateProjectTaskCommandHandler(IApplicationDbContext context) : 
+        IRequestHandler<CreateProjectTaskCommand, Guid>
     {
-        public Task<Guid> Handle(CreateProjectTaskCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreateProjectTaskCommand request, CancellationToken cancellationToken)
         {
             var entity = new ProjectTask(
                 request.Title,
@@ -13,11 +15,10 @@ namespace Application.Features.ProjectTasks.Commands.CreateProjectTask
                 request.Priority,
                 request.DueDate);
 
-            // TO-DO later (when we have a DB)
-            // _repository.Add(entity);
-            // await _unitOfWork.SaveChangesAsync();
+            context.ProjectTasks.Add(entity);
+            await context.SaveChangesAsync(cancellationToken);
 
-            return Task.FromResult(entity.Id);
+            return entity.Id;
         }
     }
 }
