@@ -42,6 +42,7 @@ try
     var app = builder.Build();
 
     app.UseExceptionHandler();
+    app.UseSerilogRequestLogging();
 
     if (app.Environment.IsDevelopment())
     {

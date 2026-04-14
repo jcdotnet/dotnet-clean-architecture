@@ -30,4 +30,4 @@ A professional, production-ready template designed for **.NET 10**. This reposit
 4. **Run**: F5 or `dotnet run --project src/Api`. Swagger will open automatically at the root URL.
 
 ---
-*Developed by [José Carlos Román Rubio](https://www.linkedin.com/in/romanrubio/) 
+*Developed by [José Carlos Román Rubio](https://www.linkedin.com/in/romanrubio/)*
