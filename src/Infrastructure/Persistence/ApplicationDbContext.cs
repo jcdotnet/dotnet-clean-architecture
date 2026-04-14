@@ -8,5 +8,13 @@ namespace Infrastructure.Persistence
         DbContext(options), IApplicationDbContext
     {
         public DbSet<ProjectTask> ProjectTasks => Set<ProjectTask>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Fluent API configurations
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
