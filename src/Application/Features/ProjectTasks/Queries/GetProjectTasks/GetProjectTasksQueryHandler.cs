@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Common.Mappings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,19 +8,18 @@ namespace Application.Features.ProjectTasks.Queries.GetProjectTasks
     public class GetProjectTasksQueryHandler(IApplicationDbContext context) :
         IRequestHandler<GetProjectTasksQuery, IEnumerable<ProjectTaskDto>>
     {
+
+        private readonly ProjectTaskMapper _mapper = new();
+        
         public async Task<IEnumerable<ProjectTaskDto>> Handle(GetProjectTasksQuery request, 
             CancellationToken cancellationToken)
         {
-            return await context.ProjectTasks
+
+            var tasks = await context.ProjectTasks
             .AsNoTracking()
-            .Select(t => new ProjectTaskDto(
-                t.Id,
-                t.Title,
-                t.Description,
-                t.Priority,
-                t.IsCompleted,
-                t.DueDate))
             .ToListAsync(cancellationToken);
+
+            return tasks.Select(_mapper.ProjectTaskToDto);
 
         }
     }
