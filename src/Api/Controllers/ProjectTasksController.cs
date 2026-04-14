@@ -1,4 +1,5 @@
 ﻿using Application.Features.ProjectTasks.Commands.CreateProjectTask;
+using Application.Features.ProjectTasks.Queries.GetProjectTasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +14,12 @@ namespace Api.Controllers
         {
             var id = await mediator.Send(command);
             return Ok(id);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProjectTaskDto>>> Get()
+        {
+            return Ok(await mediator.Send(new GetProjectTasksQuery()));
         }
     }
 }
