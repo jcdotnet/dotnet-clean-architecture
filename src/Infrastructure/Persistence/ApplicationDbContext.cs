@@ -2,19 +2,17 @@
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistence
+namespace Infrastructure.Persistence;
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) :
+    DbContext(options), IApplicationDbContext
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) :
-        DbContext(options), IApplicationDbContext
+    public DbSet<ProjectTask> ProjectTasks => Set<ProjectTask>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        public DbSet<ProjectTask> ProjectTasks => Set<ProjectTask>();
+        // Fluent API configurations
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            // Fluent API configurations
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-
-            base.OnModelCreating(modelBuilder);
-        }
+        base.OnModelCreating(modelBuilder);
     }
 }

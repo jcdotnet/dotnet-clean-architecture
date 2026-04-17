@@ -3,23 +3,21 @@ using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace Application
+namespace Application;
+public static class DependencyInjection
 {
-    public static class DependencyInjection
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
-        {
-            services.AddMediatR(config => {
-                config.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
+        services.AddMediatR(config => {
+            config.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
 
-                // Add Validation Behavior to MediatR pipeline
-                config.AddOpenBehavior(typeof(ValidationBehavior<,>));
-            });
+            // Add Validation Behavior to MediatR pipeline
+            config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+        });
 
-            // FluentValidation
-            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        // FluentValidation
+        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-            return services;
-        }
+        return services;
     }
 }
