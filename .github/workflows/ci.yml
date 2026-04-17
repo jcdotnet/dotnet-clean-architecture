@@ -2,9 +2,12 @@ name: .NET CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
   pull_request:
-    branches: [ main ]
+    branches: [ main, dev ]
 
 jobs:
   build-and-test:
@@ -19,6 +22,8 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '10.0.x'
+        cache: true
+        cache-dependency-path: '**/*.csproj'
 
     # 3. Restore NuGet packages
     - name: Restore dependencies
