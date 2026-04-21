@@ -1,4 +1,5 @@
 ﻿using Application.Common.Behaviors;
+using Application.Common.Mappings;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -17,6 +18,9 @@ public static class DependencyInjection
 
         // FluentValidation
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+        // Mapper
+        services.AddSingleton<ProjectTaskMapper>();
 
         return services;
     }

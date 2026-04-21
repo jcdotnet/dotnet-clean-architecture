@@ -5,12 +5,9 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.ProjectTasks.Queries.GetProjectTaskById;
-public class GetProjectTaskByIdQueryHandler(IApplicationDbContext context) :
+public class GetProjectTaskByIdQueryHandler(IApplicationDbContext context, ProjectTaskMapper mapper) :
     IRequestHandler<GetProjectTaskByIdQuery, ProjectTaskDto>
 {
-    
-    private readonly ProjectTaskMapper _mapper = new();
-
     public async Task<ProjectTaskDto> Handle(GetProjectTaskByIdQuery request, 
         CancellationToken cancellationToken)
     {
@@ -21,6 +18,6 @@ public class GetProjectTaskByIdQueryHandler(IApplicationDbContext context) :
         if (entity == null)
             throw new KeyNotFoundException($"Task with ID {request.Id} was not found.");
 
-        return _mapper.ProjectTaskToDto(entity);
+        return mapper.ProjectTaskToDto(entity);
     }
 }

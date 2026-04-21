@@ -19,6 +19,12 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
                 Type = "https://ietf.org",
                 Extensions = { ["errors"] = validationException.Errors.Select(e => e.ErrorMessage) }
             },
+            KeyNotFoundException keyNotFoundException => new ProblemDetails
+            {
+                Status = StatusCodes.Status404NotFound,
+                Title = "Resource Not Found",
+                Detail = keyNotFoundException.Message
+            },
             _ => new ProblemDetails
             {
                 Status = StatusCodes.Status500InternalServerError,
