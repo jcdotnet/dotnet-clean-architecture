@@ -7,21 +7,25 @@ using System.Reflection;
 namespace Application;
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddMediatR(config => {
-            config.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
+        public IServiceCollection AddApplicationServices()
+        {
+            services.AddMediatR(config =>
+            {
+                config.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
 
-            // Add Validation Behavior to MediatR pipeline
-            config.AddOpenBehavior(typeof(ValidationBehavior<,>));
-        });
+                // Add Validation Behavior to MediatR pipeline
+                config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+            });
 
-        // FluentValidation
-        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            // FluentValidation
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-        // Mapper
-        services.AddSingleton<ProjectTaskMapper>();
+            // Mapper
+            services.AddSingleton<ProjectTaskMapper>();
 
-        return services;
+            return services;
+        }
     }
 }
