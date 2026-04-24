@@ -9,22 +9,24 @@ namespace Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services,
-        IConfiguration configuration)
+    extension(IServiceCollection services)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
-
-        services.AddScoped<AuditableEntityInterceptor>();
-
-        services.AddDbContext<ApplicationDbContext>( (serviceProvider, options) =>
+        public IServiceCollection AddInfrastructureServices(IConfiguration configuration)
         {
-            var interceptor = serviceProvider.GetRequiredService<AuditableEntityInterceptor>();
-            options.UseSqlServer(connectionString).AddInterceptors(interceptor);
-        });
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-        services.AddScoped<IApplicationDbContext>(provider =>
-            provider.GetRequiredService<ApplicationDbContext>());
+            services.AddScoped<AuditableEntityInterceptor>();
 
-        return services;
+            services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+            {
+                var interceptor = serviceProvider.GetRequiredService<AuditableEntityInterceptor>();
+                options.UseSqlServer(connectionString).AddInterceptors(interceptor);
+            });
+
+            services.AddScoped<IApplicationDbContext>(provider =>
+                provider.GetRequiredService<ApplicationDbContext>());
+
+            return services;
+        }
     }
 }
