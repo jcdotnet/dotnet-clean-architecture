@@ -1,22 +1,28 @@
 ﻿using Application.Common.Interfaces;
+using Domain.Abstractions;
 using Domain.Entities;
 using MediatR;
 
 namespace Application.Features.ProjectTasks.Commands.CreateProjectTask;
 public class CreateProjectTaskCommandHandler(IApplicationDbContext context) : 
-    IRequestHandler<CreateProjectTaskCommand, Guid>
+    IRequestHandler<CreateProjectTaskCommand, Result<Guid>>
 {
-    public async Task<Guid> Handle(CreateProjectTaskCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CreateProjectTaskCommand request, CancellationToken cancellationToken)
     {
-        var entity = new ProjectTask(
+        var result = ProjectTask.Create(
             request.Title,
             request.Description,
             request.Priority,
             request.DueDate);
 
-        context.ProjectTasks.Add(entity);
+        if (!result.IsSuccess)
+        {
+            return Result.FailureResult<Guid>(result.Error);
+        }
+
+        context.ProjectTasks.Add(result.Value!);
         await context.SaveChangesAsync(cancellationToken);
 
-        return entity.Id;
+        return result.Value!.Id;
     }
 }

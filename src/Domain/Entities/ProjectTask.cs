@@ -6,13 +6,7 @@ public class ProjectTask: IAuditable
 {
     public Guid Id { get; private set; }
 
-    public string Title
-    {
-        get;
-        private set => field = string.IsNullOrWhiteSpace(value)
-            ? throw new ArgumentException("Title is required", nameof(Title)) : value.Trim();
-    }
-
+    public string Title { get; private set; }
     public string Description
     {
         get;
@@ -24,7 +18,7 @@ public class ProjectTask: IAuditable
     public DateTime CreatedAt { get; set; }
     public DateTime? DueDate { get; private set; }
 
-    public ProjectTask(string title, string description, PriorityLevel priority, DateTime? dueDate)
+    private ProjectTask(string title, string description, PriorityLevel priority, DateTime? dueDate)
     {
         Id = Guid.NewGuid();
         Title = title;
@@ -32,6 +26,18 @@ public class ProjectTask: IAuditable
         Priority = priority;
         DueDate = dueDate;
         IsCompleted = false;
+    }
+
+    // factory method that ensures the task has a valid state
+    public static Result<ProjectTask> Create(string title, string description, PriorityLevel priority,
+        DateTime? dueDate)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            return Result.FailureResult<ProjectTask>(Error.TitleRequired);
+        }
+
+        return new ProjectTask(title, description, priority, dueDate);
     }
 
     public void MarkAsCompleted() => IsCompleted = true;

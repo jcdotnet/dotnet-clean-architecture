@@ -1,4 +1,5 @@
-﻿using Domain.Enums;
+﻿using Domain.Abstractions;
+using Domain.Enums;
 using MediatR;
 
 namespace Application.Features.ProjectTasks.Commands.CreateProjectTask;
@@ -8,4 +9,4 @@ public record CreateProjectTaskCommand(
     string Title,
     string Description,
     PriorityLevel Priority,
-    DateTime? DueDate) : IRequest<Guid>;
+    DateTime? DueDate) : IRequest<Result<Guid>>;
