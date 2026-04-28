@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Infrastructure;
@@ -12,19 +11,19 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
 
         var problemDetails = exception switch
         {
-            ValidationException validationException => new ProblemDetails
-            {
-                Status = StatusCodes.Status400BadRequest,
-                Title = "Validation Error",
-                Type = "https://ietf.org",
-                Extensions = { ["errors"] = validationException.Errors.Select(e => e.ErrorMessage) }
-            },
-            KeyNotFoundException keyNotFoundException => new ProblemDetails
-            {
-                Status = StatusCodes.Status404NotFound,
-                Title = "Resource Not Found",
-                Detail = keyNotFoundException.Message
-            },
+            // Implemented Result Pattern instead
+            //ValidationException validationException => new ProblemDetails
+            //{
+            //    Status = StatusCodes.Status400BadRequest,
+            //    Title = "Validation Error",
+            //    Extensions = { ["errors"] = validationException.Errors.Select(e => e.ErrorMessage) }
+            //},
+            //KeyNotFoundException keyNotFoundException => new ProblemDetails
+            //{
+            //    Status = StatusCodes.Status404NotFound,
+            //    Title = "Resource Not Found",
+            //    Detail = keyNotFoundException.Message
+            //},
             _ => new ProblemDetails
             {
                 Status = StatusCodes.Status500InternalServerError,

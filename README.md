@@ -1,15 +1,15 @@
 # .NET Clean Architecture Blueprint
 
-This is my personal **blueprint** for building ASP.NET Core applications with Clean Architecture and .NET 10, used as my current standard since 2026.
+This is my personal **blueprint** for building applications with **ASP.NET Core and .NET 10**. It represents the structure I go for when a project's complexity justifies it, and I'm sharing it as a reference for anyone who wants a solid starting point for their project.
 
 ### Architecture
-* **Domain:** Rich entities with encapsulated business logic and no external dependencies.
-* **Application:** CQRS implementation using **MediatR**, **FluentValidation** and source-generated mapping with **Mapperly**.
-* **Infrastructure:** Data persistence handled via EF Core (I used **SQL Server** with **LocalDB** for this template) with **automated auditing** for creation dates using Interceptors..
-* **API:** ASP.NET Core Web API (Controller-based) with global exception handling for **ProblemDetails** errors.
+* **Domain:** I use the **Result Pattern** for error handling, reserving exceptions only for truly unexpected system failures.
+* **Application:** CQRS implementation using **MediatR**, **FluentValidation**, and **Mapperly** for mapping.
+* **Infrastructure:** EF Core with **SQL Server (LocalDB)**. I use **Interceptors** for automated auditing (created/modified dates), keeping the Handlers focused purely on logic.
+* **API:** ASP.NET Core Web API using custom extensions that map `Result` objects to HTTP responses (**200 OK**, **400 Bad Request**, **404 Not Found**).
+
+Note: I intentionally avoided redundant layers like the Repository Pattern on top of EF Core to avoid over-engineering and keep the codebase lean.
 
 ### Quality Assurance
-* **Testing:** Unit Tests using **xUnit**, **NSubstitute** for isolation, and **FluentAssertions**.
-* **CI/CD:** Automated build and test workflows via **GitHub Actions**.
-
-Instead of a bloated template, I keep this one focused on the essentials to avoid unnecessary over-engineering, such as redundant repository layers.
+* **Testing:** Unit Tests with xUnit and FluentAssertions, using NSubstitute for mocking and InMemoryDatabase for realistic query testing.
+* **CI/CD:** Basic GitHub Actions workflow to ensure every push builds and passes all tests.

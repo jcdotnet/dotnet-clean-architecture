@@ -1,4 +1,5 @@
-﻿using Application.Features.ProjectTasks.Commands.CreateProjectTask;
+﻿using Api.Extensions;
+using Application.Features.ProjectTasks.Commands.CreateProjectTask;
 using Application.Features.ProjectTasks.Queries.GetProjectTaskById;
 using Application.Features.ProjectTasks.Queries.GetProjectTasks;
 using MediatR;
@@ -11,21 +12,32 @@ namespace Api.Controllers;
 public class ProjectTasksController(ISender mediator) : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult<Guid>> Create(CreateProjectTaskCommand command)
+    public async Task<IActionResult> Create(CreateProjectTaskCommand command)
     {
-        var id = await mediator.Send(command);
-        return Ok(id);
+        var result = await mediator.Send(command); // Result<Guid>
+
+        if (result.IsSuccess) return Ok(result.Value);
+
+        return result.ToActionResult();
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProjectTaskDto>>> Get()
+    public async Task<IActionResult> Get()
     {
-        return Ok(await mediator.Send(new GetProjectTasksQuery()));
+        var result = await mediator.Send(new GetProjectTasksQuery()); // Result<IEnumerable<ProjectTaskDto>>
+
+        if (result.IsSuccess) return Ok(result.Value);
+
+        return result.ToActionResult();
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<ProjectTaskDto>> GetById(Guid id)
+    public async Task<IActionResult> GetById(Guid id)
     {
-        return Ok(await mediator.Send(new GetProjectTaskByIdQuery(id)));
+        var result = await mediator.Send(new GetProjectTaskByIdQuery(id)); // Result<ProjectTaskDto>
+
+        if (result.IsSuccess) return Ok(result);
+
+        return result.ToActionResult();
     }
 }
