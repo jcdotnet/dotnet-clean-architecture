@@ -7,7 +7,7 @@ Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger()
 
 try
 {
-    Log.Information("Starting JcDotNet Clean Architecture API...");
+    Log.Information("Starting Clean Architecture API...");
 
     var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +27,7 @@ try
         app.UseSwagger();
         app.UseSwaggerUI(config =>
         {
-            config.SwaggerEndpoint("/swagger/v1/swagger.json", "JcDotNet API V1");
+            config.SwaggerEndpoint("/swagger/v1/swagger.json", "Clean Architecture API V1");
             config.RoutePrefix = string.Empty; // This makes Swagger the home page
         });
     }
