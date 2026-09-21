@@ -22,7 +22,7 @@ public static class DependencyInjection
             {
                 config.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "JcDotNet Clean Architecture API",
+                    Title = "Clean Architecture API",
                     Version = "v1"
                 });
             });
