@@ -1,7 +1,7 @@
 ﻿using Application.Ports.Outbound;
+using Infrastructure.Adapters;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Interceptors;
-using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

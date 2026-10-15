@@ -1,8 +1,9 @@
 ﻿using Application.Ports.Outbound;
 using Domain.Entities;
+using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistence.Repositories;
+namespace Infrastructure.Adapters;
 
 public class ProjectTaskRepository(ApplicationDbContext context) : IProjectTaskRepository
 {
