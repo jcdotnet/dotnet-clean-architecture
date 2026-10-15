@@ -1,11 +1,10 @@
-﻿using Application.Common.Interfaces;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Infrastructure.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
-    AuditableEntityInterceptor auditableInterceptor) : DbContext(options), IApplicationDbContext
+    AuditableEntityInterceptor auditableInterceptor) : DbContext(options)
 {
     public DbSet<ProjectTask> ProjectTasks => Set<ProjectTask>();
 

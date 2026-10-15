@@ -1,5 +1,6 @@
-﻿using Application.Common.Interfaces;
-using Application.Features.ProjectTasks.Commands.CreateProjectTask;
+﻿using Application.Features.ProjectTasks.Commands.CreateProjectTask;
+using Application.Ports.Outbound;
+using Domain.Entities;
 using Domain.Enums;
 using FluentAssertions;
 using NSubstitute;
@@ -8,14 +9,14 @@ namespace Application.UnitTests.Features.ProjectTasks;
 public class CreateProjectTaskTests
 {
 
-    private readonly IApplicationDbContext _context;
+    private readonly IProjectTaskRepository _repository;
     private readonly CreateProjectTaskCommandHandler _handler;
 
     public CreateProjectTaskTests()
     {
-        // Arrange: Mocking the database context
-        _context = Substitute.For<IApplicationDbContext>();
-        _handler = new CreateProjectTaskCommandHandler(_context);
+        // Arrange: Mocking the repository
+        _repository = Substitute.For<IProjectTaskRepository>();
+        _handler = new CreateProjectTaskCommandHandler(_repository);
     }
 
     [Fact]
@@ -54,7 +55,10 @@ public class CreateProjectTaskTests
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().NotBeEmpty();
 
-        // Verify that the changes were actually committed to the database
-        await _context.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        // Verify that the repository receives the task to persist
+        await _repository.Received(1).AddAsync(
+            Arg.Is<ProjectTask>(task => task.Id == result.Value),
+            Arg.Any<CancellationToken>()
+        );
     }
 }

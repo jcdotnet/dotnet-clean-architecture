@@ -1,28 +1,22 @@
-﻿using Application.Common.Interfaces;
-using Application.Common.Mappings;
+﻿using Application.Common.Mappings;
 using Application.Features.ProjectTasks.Queries.GetProjectTaskById;
+using Application.Ports.Outbound;
 using Domain.Entities;
 using Domain.Enums;
 using FluentAssertions;
-using Infrastructure.Persistence;
-using Infrastructure.Persistence.Interceptors;
-using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 
 namespace Application.UnitTests.Features.ProjectTasks;
 
 public class GetProjectTaskByIdTests
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IProjectTaskRepository _repository;
     private readonly GetProjectTaskByIdQueryHandler _handler;
 
     public GetProjectTaskByIdTests()
     {
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-        _context = new ApplicationDbContext(options, Substitute.For<AuditableEntityInterceptor>());
-        _handler = new GetProjectTaskByIdQueryHandler(_context, new ProjectTaskMapper());
+        _repository = Substitute.For<IProjectTaskRepository>();
+        _handler = new GetProjectTaskByIdQueryHandler(_repository, new ProjectTaskMapper());
     }
 
     [Fact]
@@ -46,8 +40,7 @@ public class GetProjectTaskByIdTests
 
         typeof(ProjectTask).GetProperty(nameof(ProjectTask.Id))!.SetValue(task, taskId);
 
-        _context.ProjectTasks.Add(task);
-        await _context.SaveChangesAsync(CancellationToken.None);
+        _repository.GetByIdAsync(taskId, Arg.Any<CancellationToken>()).Returns(task);
 
         var query = new GetProjectTaskByIdQuery(taskId);
 

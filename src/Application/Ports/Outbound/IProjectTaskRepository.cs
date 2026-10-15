@@ -11,4 +11,8 @@ namespace Application.Ports.Outbound;
 public interface IProjectTaskRepository
 {
     Task AddAsync(ProjectTask projectTask, CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<ProjectTask>> GetAsync(CancellationToken cancellationToken);
+
+    Task<ProjectTask?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 }

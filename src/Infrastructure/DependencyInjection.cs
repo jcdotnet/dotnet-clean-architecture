@@ -1,6 +1,7 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Ports.Outbound;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Interceptors;
+using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,8 +24,7 @@ public static class DependencyInjection
                 options.UseSqlServer(connectionString).AddInterceptors(interceptor);
             });
 
-            services.AddScoped<IApplicationDbContext>(provider =>
-                provider.GetRequiredService<ApplicationDbContext>());
+            services.AddScoped<IProjectTaskRepository, ProjectTaskRepository>();
 
             return services;
         }
