@@ -6,25 +6,25 @@ namespace Api.Extensions;
 
 public static class ResultExtensions
 {
-    extension(Result result)
+    extension<T>(Result<T> result)
     {
-        public ActionResult ToActionResult()
+        public ActionResult ToActionResult() => result switch
         {
-            if (result.IsSuccess)
-            {
-                return new OkResult(); // maybe not needed
-            }
+            T value => new OkObjectResult(value),
 
-            return result.Error.ErrorType switch
-            {
-                ErrorType.NotFound => new NotFoundObjectResult(result.Error),
-                ErrorType.Validation => new BadRequestObjectResult(result.Error),
-                ErrorType.BadRequest => new BadRequestObjectResult(result.Error),
-                ErrorType.Unauthorized => new ObjectResult(result.Error) { StatusCode = 401 },
-                _ => new ObjectResult(result.Error) { StatusCode = 500 }
-            };
-        }
+            Error error => MapError(error),
+
+            null => MapError(Error.NullValue)
+        };
     }
+    private static ActionResult MapError(Error error) => error.ErrorType switch
+    {
+        ErrorType.NotFound => new NotFoundObjectResult(error),
+        ErrorType.Validation => new BadRequestObjectResult(error),
+        ErrorType.BadRequest => new BadRequestObjectResult(error),
+        ErrorType.Unauthorized => new ObjectResult(error) { StatusCode = 401 },
+        _ => new ObjectResult(error) { StatusCode = 500 }
+    };
 }
 
 

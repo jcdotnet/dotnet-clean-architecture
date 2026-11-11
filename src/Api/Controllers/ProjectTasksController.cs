@@ -16,8 +16,6 @@ public class ProjectTasksController(ISender mediator) : ControllerBase
     {
         var result = await mediator.Send(command); // Result<Guid>
 
-        if (result.IsSuccess) return Ok(result.Value);
-
         return result.ToActionResult();
     }
 
@@ -26,8 +24,6 @@ public class ProjectTasksController(ISender mediator) : ControllerBase
     {
         var result = await mediator.Send(new GetProjectTasksQuery()); // Result<IEnumerable<ProjectTaskDto>>
 
-        if (result.IsSuccess) return Ok(result.Value);
-
         return result.ToActionResult();
     }
 
@@ -35,8 +31,6 @@ public class ProjectTasksController(ISender mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetProjectTaskByIdQuery(id)); // Result<ProjectTaskDto>
-
-        if (result.IsSuccess) return Ok(result);
 
         return result.ToActionResult();
     }

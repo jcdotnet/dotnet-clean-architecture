@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Features.ProjectTasks.Commands.CreateProjectTask;
+using Domain.Abstractions;
 using Domain.Enums;
 using FluentAssertions;
 using NSubstitute;
@@ -32,9 +33,11 @@ public class CreateProjectTaskTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Error.Code.Should().Be("ProjectTask.TitleRequired");
-        result.Error.ErrorType.Should().Be(ErrorType.Validation);
+        var error = result.Value.Should().BeOfType<Error>().Which;
+
+        error.Should().NotBeNull();
+        error.Code.Should().Be("ProjectTask.TitleRequired");
+        error.ErrorType.Should().Be(ErrorType.Validation);
     }
 
     [Fact]
@@ -51,8 +54,9 @@ public class CreateProjectTaskTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().NotBeEmpty();
+        var id = result.Value.Should().BeOfType<Guid>().Which;
+
+        id.Should().NotBeEmpty();
 
         // Verify that the changes were actually committed to the database
         await _context.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());

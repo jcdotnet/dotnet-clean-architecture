@@ -1,6 +1,8 @@
 ﻿using Application.Common.Interfaces;
 using Application.Common.Mappings;
 using Application.Features.ProjectTasks.Queries.GetProjectTaskById;
+using Application.Features.ProjectTasks.Queries.GetProjectTasks;
+using Domain.Abstractions;
 using Domain.Entities;
 using Domain.Enums;
 using FluentAssertions;
@@ -33,8 +35,9 @@ public class GetProjectTaskByIdTests
         var result = await _handler.Handle(new GetProjectTaskByIdQuery(Guid.NewGuid()), CancellationToken.None);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Error.ErrorType.Should().Be(ErrorType.NotFound);
+        var error = result.Value.Should().BeOfType<Error>().Which;
+
+        error.ErrorType.Should().Be(ErrorType.NotFound);
     }
 
     [Fact]
@@ -42,7 +45,7 @@ public class GetProjectTaskByIdTests
     {
         // Arrange
         var taskId = Guid.NewGuid();
-        var task = ProjectTask.Create("Task Name", "Task Description", PriorityLevel.Medium, null).Value!;
+        var task = (ProjectTask)ProjectTask.Create("Task Name", "Description", PriorityLevel.Medium, null).Value!;
 
         typeof(ProjectTask).GetProperty(nameof(ProjectTask.Id))!.SetValue(task, taskId);
 
@@ -55,9 +58,9 @@ public class GetProjectTaskByIdTests
         var result = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().NotBeNull();
-        result.Value!.Id.Should().Be(taskId);
+        var dto = result.Value.Should().BeOfType<ProjectTaskDto>().Which;
+
+        dto.Id.Should().Be(taskId);
     }
 
 }

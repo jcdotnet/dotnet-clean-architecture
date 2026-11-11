@@ -34,7 +34,7 @@ public class ProjectTask: IAuditable
     {
         if (string.IsNullOrWhiteSpace(title))
         {
-            return Result.FailureResult<ProjectTask>(Error.TitleRequired);
+            return Error.TitleRequired;
         }
 
         return new ProjectTask(title, description, priority, dueDate);

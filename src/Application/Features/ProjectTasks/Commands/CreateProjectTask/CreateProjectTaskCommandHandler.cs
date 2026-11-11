@@ -15,14 +15,19 @@ public class CreateProjectTaskCommandHandler(IApplicationDbContext context) :
             request.Priority,
             request.DueDate);
 
-        if (!result.IsSuccess)
+        return await (result switch
         {
-            return Result.FailureResult<Guid>(result.Error);
+            ProjectTask projectTask => SaveAsync(projectTask),
+            Error error => Task.FromResult<Result<Guid>>(error),
+            null => Task.FromResult<Result<Guid>>(Error.NullValue)
+        });
+
+        async Task<Result<Guid>> SaveAsync(ProjectTask projectTask)
+        {
+            context.ProjectTasks.Add(projectTask);
+            await context.SaveChangesAsync(cancellationToken);
+
+            return projectTask.Id;
         }
-
-        context.ProjectTasks.Add(result.Value!);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return result.Value!.Id;
     }
 }

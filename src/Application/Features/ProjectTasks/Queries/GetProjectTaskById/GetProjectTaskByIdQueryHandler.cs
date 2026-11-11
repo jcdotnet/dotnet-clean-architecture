@@ -17,8 +17,7 @@ public class GetProjectTaskByIdQueryHandler(IApplicationDbContext context, Proje
         .AsNoTracking()
         .FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
 
-        if (entity is null)
-            return Result.FailureResult<ProjectTaskDto>(ProjectTaskErrors.NotFound(request.Id));
+        if (entity is null) return ProjectTaskErrors.NotFound(request.Id);
 
         return mapper.ProjectTaskToDto(entity);
     }

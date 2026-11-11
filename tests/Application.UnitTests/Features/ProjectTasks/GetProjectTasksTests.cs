@@ -31,16 +31,18 @@ public class GetProjectTasksTests
         var result = await _handler.Handle(new GetProjectTasksQuery(), CancellationToken.None);
 
         // Assert
-        result.Value.Should().BeEmpty();
-        result.Value.Should().NotBeNull();
+        var tasks = (IEnumerable<ProjectTaskDto>)result.Value;
+
+        tasks.Should().NotBeNull();
+        tasks.Should().BeEmpty();
     }
 
     [Fact]
     public async Task GetProjectTasksQueryHandler_WhenTasksExist_ShouldReturnSuccessWithData()
     {
         // Arrange
-        var task1 = ProjectTask.Create("Task 1 Name", "Task 1 Description", PriorityLevel.Low, null).Value!;
-        var task2 = ProjectTask.Create("Task 2 Name", "Task 2 Description", PriorityLevel.High, null).Value!;
+        var task1 = (ProjectTask)ProjectTask.Create("Task1 Name", "Description", PriorityLevel.Low, null).Value!;
+        var task2 = (ProjectTask)ProjectTask.Create("Task2 Name", "Description", PriorityLevel.High, null).Value!;
 
         _context.ProjectTasks.AddRange(task1, task2);
         await _context.SaveChangesAsync(CancellationToken.None);
@@ -49,8 +51,9 @@ public class GetProjectTasksTests
         var result = await _handler.Handle(new GetProjectTasksQuery(), CancellationToken.None);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().HaveCount(2);
-        result.Value.Should().Contain(t => t.Title == "Task 1 Name");
+        var tasks = (IEnumerable<ProjectTaskDto>)result.Value;
+
+        tasks.Should().HaveCount(2);
+        tasks.Should().Contain(t => t.Title == "Task1 Name");
     }
 }
